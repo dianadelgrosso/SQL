@@ -1,0 +1,170 @@
+--For this project, I downloaded a dataset called Chinook, which represents a digital media store and includes tables for artists, albums, media tracks, invoices, and customers.
+--Then I created a table to insert Spotify data into.
+--Finally, I performed analytics on the data using SQL. 
+
+
+
+--Show Customers (their full names, customer ID, and country) who are not in the US.
+
+SELECT CustomerId, FirstName, LastName, Country
+FROM customers
+WHERE Country <> 'USA';
+
+
+--Find what 3 countries most customers come from.
+
+SELECT COUNT(Country), Country 
+FROM customers
+GROUP BY Country
+ORDER BY COUNT(Country) DESC LIMIT 3;
+
+
+--Show the customers from Brazil 
+
+SELECT CustomerId, FirstName, LastName
+FROM customers 
+WHERE Country='Brazil';
+
+
+--Find the Invoices of customers who are from Brazil. Create results with a table that shows the customer's full name, Invoice ID, Date of the invoice, and billing country.
+
+SELECT c.FirstName, c.LastName, i.InvoiceId,i.InvoiceDate, i.BillingCountry
+FROM invoices i
+LEFT JOIN customers c
+ON i.customerId=c.CustomerId
+WHERE c.Country = 'Brazil'
+GROUP BY i.InvoiceId;
+
+
+--Find the total amount spent in 2013 by customers from Brazil.
+
+SELECT SUM(i.total) AS "Total_Amount_Spent_2013_Brazil"
+FROM invoices i
+LEFT JOIN customers c
+ON i.customerId=c.CustomerId
+WHERE c.Country = 'Brazil'
+AND i.InvoiceDate like '%2013%';
+
+
+--Show the employees who are Sales Agents.
+
+SELECT FirstName, LastName, Title
+FROM employees
+WHERE Title = 'Sales Support Agent'
+ORDER BY FirstName;
+
+
+--Find a unique/distinct list of billing countries from the Invoice table.
+
+SELECT distinct BillingCountry 
+FROM invoices;
+
+
+--Provide a query that shows the invoices associated with each sales agent, with the resulting table including the name of each Sales Agent.
+
+SELECT e.LastName, e.FirstName, e.title, i.invoiceId
+FROM employees e
+INNER JOIN customers c
+ON e.EmployeeId=c.SupportRepId
+INNER JOIN invoices i 
+ON i.CustomerId=c.CustomerId
+WHERE e.title = 'Sales Support Agent'; 
+
+
+--Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+
+SELECT c.LastName, c.FirstName, e.LastName AS 'Agent Last Name', 
+e.FirstName AS 'Agent First Name', i.BillingCountry,
+i.total
+FROM employees e
+INNER JOIN customers c
+ON e.EmployeeId=c.SupportRepId
+FULL OUTER JOIN invoices i 
+ON i.CustomerId=c.CustomerId;
+
+
+--How many Invoices were there in 2009?
+
+SELECT COUNT(InvoiceId) 
+FROM invoices
+WHERE Invoicedate LIKE '%2009%';
+
+
+--What are the total sales for 2009?
+
+SELECT SUM(total) 
+FROM invoices
+WHERE Invoicedate LIKE '%2009%';
+
+
+--Write a query that includes the purchased track name with each invoice line ID.
+
+SELECT t.Name, ii.InvoiceLineId
+FROM invoices i
+INNER JOIN invoice_items ii
+ON i.InvoiceId=ii.InvoiceId
+LEFT JOIN tracks t
+ON ii.trackId=t.trackId;
+
+
+--Write a query that includes the purchased track name AND artist name with each invoice line ID.
+
+SELECT t.Name AS title, art.Name AS artist, ii.InvoiceLineId
+FROM invoices i
+INNER JOIN invoice_items ii
+ON i.InvoiceId=ii.InvoiceId
+LEFT JOIN tracks t
+ON ii.trackId=t.trackId
+INNER JOIN albums a
+ON t.albumId=a.albumId
+INNER JOIN artists art
+ON a.artistId=art.artistId;
+
+
+--Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+
+SELECT t.name AS 'Track Name', a.title AS 'Album', m.Name AS 'media type', g.Name AS 'genre'
+FROM tracks t
+LEFT JOIN albums a
+ON t.albumId=a.albumId
+LEFT JOIN media_types m
+ON t.MediaTypeId=m.MediaTypeId
+LEFT JOIN genres g
+ON t.genreId=g.genreId;
+
+
+--Show the total sales made by each sales agent.
+
+SELECT distinct e.LastName, e.FirstName, ROUND(SUM(i.total), 2) AS 'Total Sales'
+FROM employees e
+INNER JOIN customers c
+ON e.EmployeeId=c.SupportRepId
+INNER JOIN invoices i 
+ON i.CustomerId=c.CustomerId
+WHERE e.title = 'Sales Support Agent'
+GROUP BY e.LastName, e.FirstName;
+
+
+--Which sales agent made the most dollars in sales in 2009?
+
+SELECT distinct e.LastName, e.FirstName, ROUND(SUM(i.total),2) AS 'Total Sales'
+FROM employees e
+INNER JOIN customers c
+ON e.EmployeeId=c.SupportRepId
+INNER JOIN invoices i 
+ON i.CustomerId=c.CustomerId
+WHERE e.title = 'Sales Support Agent'
+AND i.invoicedate like '%2009%'
+GROUP BY e.LastName, e.FirstName
+ORDER BY SUM(i.total)DESC 
+LIMIT 1;
+
+
+--Find the most purchased track, without assuming there is only one.
+
+SELECT distinct t.name, sum(ii.quantity) AS 'quantity purchased'
+FROM invoice_items ii
+INNER JOIN tracks t
+ON ii.trackid=t.trackid GROUP BY t.name
+ORDER BY SUM(ii.quantity) DESC
+
