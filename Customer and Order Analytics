@@ -1,4 +1,5 @@
-SELECT * FROM BIT_DB.JanSales;
+--In this SQL, I am querying a database with multiple tables to analyze and quantify statistics about order and customer data.
+
 
 
 --How many orders were placed in January?
@@ -28,14 +29,11 @@ WHERE price =
 FROM BIT_DB.JanSales);
 
 --What is the total revenue for each product sold in January? 
-
 SELECT product, sum(quantity)*price AS Revenue
 FROM BIT_DB.JanSales
 GROUP BY product;
 
---Which products were sold in Febuary at 548 Lincoln St, Seattle WA 98101,
---how many of each were sold, and what was the total revenue?
-
+--Which products were sold in Febuary at 548 Lincoln St, Seattle WA 98101,how many of each were sold, and what was the total revenue?
 SELECT distinct product, 
 sum(quantity), 
 sum(quantity)*price AS Revenue
@@ -45,7 +43,6 @@ GROUP BY product;
 
 --How many customers ordered more than 2 products at a time in February, 
 --what was the average amount spent for those customers?
-
 SELECT COUNT(distinct customers.acctnum), AVG(quantity*price)
 FROM BIT_DB.FebSales FebSales
 LEFT JOIN Bit_DB.customers Customers
@@ -55,15 +52,12 @@ AND orderid<>'Order ID'
 AND length(orderid) = 6;
 
 --What were all the products sold in Los Angeles in February, and how many of each were sold?
-
 SELECT distinct product, sum(quantity)
 FROM BIT_DB.FebSales 
 WHERE location like '%los angeles%'
 GROUP BY product
 
---Which locations in New York recieved at least 3 orders in January, 
---and how many orders did each recieve?
-
+--Which locations in New York recieved at least 3 orders in January, and how many orders did each recieve?
 SELECT distinct location, COUNT(orderID)
 FROM BIT_DB.JanSales
 WHERE location like '%NY%' 
@@ -73,14 +67,12 @@ GROUP BY location
 HAVING COUNT(orderID) >= 3;
 
 --How many of each type of headphone were sold in February?
-
 SELECT distinct product, sum(quantity) AS quantity
 FROM BIT_DB.FebSales 
 WHERE product like '%headphone%'
 GROUP BY product;
 
 --What was the average amount spent per account in February?
-
 SELECT sum(price*quantity)/COUNT(customers.acctnum)
 AS 'Average Spent'
 FROM BIT_DB.customers customers
@@ -90,7 +82,6 @@ WHERE orderid<>'Order ID'
 AND length(orderid) = 6;
 
 --What was the average quantity of products purchased per account in February?
-
 SELECT sum(febsales.quantity)/COUNT(customers.acctnum)
 AS 'Average Quantity Purchased'
 FROM BIT_DB.customers customers
@@ -100,7 +91,6 @@ WHERE orderid<>'Order ID'
 AND length(orderid) = 6;
 
 --Which product brought in the most revenue in January and how much revenue did it bring in total?
-
 SELECT distinct product, sum(price*quantity) AS 'Total_Revenue'
 FROM BIT_DB.JanSales
 GROUP BY product
