@@ -1,7 +1,6 @@
 --In this SQL, I am querying a database with multiple tables to analyze and quantify statistics about order and customer data.
 
 
-
 --How many orders were placed in January?
 SELECT COUNT(orderid) FROM BIT_DB.JanSales
 WHERE orderid<>'Order ID'
