@@ -61,6 +61,8 @@ VALUES
     ;
 
 
+
+--ANALYSIS:
 --The following SQL was written to analyze and answer questions about the movies and TV shows on Netflix
 
 #1. How many movies are there in the database?
