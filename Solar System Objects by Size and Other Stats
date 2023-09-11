@@ -1,3 +1,5 @@
+--This project utilizes the following data on objects in the Solar System:
+
 /* Source:
   https://www.kaggle.com/nasa/astronaut-yearbook
 */
@@ -380,11 +382,19 @@ INSERT INTO astronauts(Name,Year,GroupNum,Status,Birth_Date,Birth_Place,Gender,A
 INSERT INTO astronauts(Name,Year,GroupNum,Status,Birth_Date,Birth_Place,Gender,Alma_Mater,Undergraduate_Major,Graduate_Major,Military_Rank,Military_Branch,Space_Flights,Space_Flight_hr,Space_Walks,Space_Walks_hr,Missions,Death_Date,Death_Mission) VALUES ('John W. Young',1962,2,'Retired','9/24/1930','San Francisco, CA','Male','Georgia Institute of Technology','Aeronautical Engineering',NULL,'Captain','US Navy (Retired)',6,835,3,20,'Gemini 3, Gemini 10, Apollo 10, Apollo 16, STS-1 (Columbia), STS-9 (Columbia)',NULL,NULL);
 INSERT INTO astronauts(Name,Year,GroupNum,Status,Birth_Date,Birth_Place,Gender,Alma_Mater,Undergraduate_Major,Graduate_Major,Military_Rank,Military_Branch,Space_Flights,Space_Flight_hr,Space_Walks,Space_Walks_hr,Missions,Death_Date,Death_Mission) VALUES ('George D. Zamka',1998,17,'Retired','6/29/1962','Jersey City, NJ','Male','US Naval Academy; Florida Institute of Technology','Mathematics','Engineering Management','Colonel','US Marine Corps (Retired)',2,692,0,0,'STS-120 (Discovery), STS-130 (Endeavor)',NULL,NULL);
 
-SELECT ROUND(AVG(Space_Flight_hr)) AS 'Average Space Flight Hours' FROM astronauts;
+--Analysis:
 
-SELECT Gender, ROUND(AVG(Space_Flight_hr)) AS 'Average Space Flight Hours' FROM astronauts GROUP BY Gender;
+--Find the average hours in space flight of all astronauts.
+SELECT ROUND(AVG(Space_Flight_hr)) AS 'Average Space Flight Hours' 
+FROM astronauts;
 
-SELECT Name, Gender, ROUND(Max(Space_Flight_hr)) AS 'Most Space Flight Hours' FROM astronauts GROUP BY Gender;
+--Find the average space flight hours of female astronauts.
+SELECT Gender, ROUND(AVG(Space_Flight_hr)) AS 'Average Space Flight Hours' 
+FROM astronauts 
+GROUP BY Gender;
+
+--Find which astronaut
+SELECT Name, Gender, ROUND(MAX(Space_Flight_hr)) AS 'Most Space Flight Hours' FROM astronauts GROUP BY Gender;
 
 SELECT name AS 'Female Astronauts', Space_Flight_hr AS 'Space Flight Hours' FROM astronauts WHERE Gender = 'Female' AND Space_Flight_hr>(SELECT ROUND(AVG(Space_Flight_hr)) FROM astronauts WHERE Gender = 'Female') ORDER BY Space_Flight_hr DESC;
 
